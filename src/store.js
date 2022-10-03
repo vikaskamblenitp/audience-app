@@ -1,6 +1,9 @@
 import { createStore } from "vuex";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-
+import {
+	getAuth,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const store = createStore({
 	state() {
@@ -27,90 +30,117 @@ const store = createStore({
 		};
 	},
 	mutations: {
-		login(state, payload) {
-			const auth = getAuth();
-			signInWithEmailAndPassword(auth, payload.email, payload.password)
-				.then((userCredential)=>{
-					console.log(userCredential.user);
-					console.log('user logged in successfully');
-					state.isLoggedIn = true;
-				})
-				.catch((error)=>{
-					alert(error.message);
-					this.$router.push('/login');
-					console.log(error.message);
-				})
+		login(state) {
+			state.isLoggedIn = true;
 		},
 		logout(state) {
 			state.isLoggedIn = false;
 		},
-		signup(state, payload) {
-			console.log("In Signup");
-			const auth = getAuth();
-
-			createUserWithEmailAndPassword(auth, payload.email, payload.password)
-				.then((userCredential) => {
-					// Signed in
-
-					const user = userCredential.user;
-					console.log(user);
-					console.log("SignUp completed");
-					state.isLoggedIn = true;
-					// ...
-				})
-				.catch((error) => {
-					//const errorCode = error.code;
-					const errorMessage = error.message;
-					alert(errorMessage)
-					console.log(errorMessage);
-					this.$router.push('/login');
-					console.log('vikas');
-
-					// ..
-				});
+		signup(state) {
+			state.isLoggedIn = true;
 		},
-		addNotice(state, payload) {
-			if(payload.via === 'form'){
-			const notice = {
-				via : payload.via,
-				id: payload.id,
-				title: payload.title,
-				description: payload.description,
-				issuedBy: payload.issuedBy,
-				phone: payload.phone,
-			};
+		addNotice(state, notice) {	
 			state.allNotices.unshift(notice);
-		}else{
-			const picNotice ={
-				id : payload.id,
-				pic : payload.pic,
-				via : payload.via,
-			}
-			state.allNotices.unshift(picNotice);
-		}
-			
-			console.log("total notices :", state.allNotices.length);
+		},
+		fetchNotice(state,payload) {
+			state.allNotices = payload;
 		},
 	},
 	actions: {
 		login(context, payload) {
-			context.commit("login", payload);
+			const auth = getAuth();
+			signInWithEmailAndPassword(auth, payload.email, payload.password)
+				.then((userCredential) => {
+					console.log(userCredential.user);
+					console.log("user logged in successfully");
+					context.commit("login");
+				})
+				.catch((error) => {
+					alert(error.message);
+					this.$router.push("/login");
+					console.log(error.message);
+				});
 		},
 		logout(context) {
 			context.commit("logout");
 		},
-		addNotice(context, payload) {
-			context.commit("addNotice", payload);
+		async addNotice(context, payload) {
+			let notice;
+			if (payload.via === "form") {
+				notice = {
+					via: payload.via,
+					id: payload.id,
+					title: payload.title,
+					description: payload.description,
+					issuedBy: payload.issuedBy,
+					phone: payload.phone,
+				};
+				//state.allNotices.unshift(notice);
+			} else {
+				notice = {
+					id: payload.id,
+					pic: payload.pic,
+					via: payload.via,
+				};
+				//state.allNotices.unshift(picNotice);
+			}
+			try {
+				const response = await fetch(
+					"https://audience-app-dc736-default-rtdb.firebaseio.com/notice.json",
+					{
+						method: "POST",
+						header: { "Content-Type": "application/json" },
+						body: JSON.stringify(notice),
+					}
+				);
+				if (response.ok) {
+					context.commit("addNotice", notice);
+					console.log(response);
+				} else {
+					console.log(response);
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		},
+		async fetchNotice(context) {
+			const response =await fetch(
+				"https://audience-app-dc736-default-rtdb.firebaseio.com/notice.json"
+			)
+			const fetchedNotices = await response.json();
+			
+			const noticeArray = [];
+			for(const id in fetchedNotices){
+				noticeArray.push(fetchedNotices[id]);
+			}
+			context.commit("fetchNotice",noticeArray);
 		},
 		signup(context, payload) {
-			context.commit("signup", payload);
+			const auth = getAuth();
+			createUserWithEmailAndPassword(auth, payload.email, payload.password)
+				.then((userCredential) => {
+					// Signed in
+					const user = userCredential.user;
+					context.commit("signup");
+					console.log(user);
+					// ...
+				})
+				.catch((error) => {
+					const errorMessage = error.message;
+					alert(errorMessage);
+					console.log(errorMessage);
+					this.$router.push("/login");
+					// ..
+				});
 		},
 	},
 	getters: {
 		notices(state) {
-			console.log(state.allNotices.length);
 			return state.allNotices;
 		},
+		loginStatus(state) {
+			return state.isLoggedIn;
+		}
 	},
 });
 

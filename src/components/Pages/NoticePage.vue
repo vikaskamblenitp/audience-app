@@ -66,12 +66,16 @@
 				return this.$store.getters.notices;
 			},
 		},
+		created(){
+			this.$store.dispatch('fetchNotice');
+		},
 		methods:{
 			reload(){
 				this.loading = true;
 				setTimeout(()=>{
 					this.loading = false;
 				},2000);
+				this.$store.dispatch("fetchNotice");
 			}
 		},
 	};

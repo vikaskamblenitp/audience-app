@@ -14,8 +14,8 @@
 				<li>
 					<router-link to="/info">INFORMATION</router-link>
 				</li>
-				<li v-if="$store.state.isLoggedIn" @click="logout">LOGOUT</li>
-				<li v-else @click="login">LOGIN</li>
+				<li v-if="$store.getters.loginStatus" @click="logout"><router-link to="/login">LOGOUT</router-link></li>
+				<li v-else @click="login"><router-link to="/login">LOGIN</router-link></li>
 			</ul>
 		</nav>
 	</header>
