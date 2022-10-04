@@ -15,7 +15,7 @@ export default {
 <style>
 body{
   margin:0;
-  background-color: #f8f9fa;
+  background-color: white;
 }
 #app {
   -webkit-font-smoothing: antialiased;

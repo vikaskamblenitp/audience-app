@@ -1,7 +1,11 @@
 <template>
 	<header>
-		<div>
-			<h1>KANZARA</h1>
+		<div class="header-panel">
+			<img
+				class="main-logo"
+				src="../../assets/logo.png"
+				alt="Digital Kanzara"
+			/>
 		</div>
 		<nav>
 			<ul>
@@ -14,8 +18,12 @@
 				<li>
 					<router-link to="/info">INFORMATION</router-link>
 				</li>
-				<li v-if="$store.getters.loginStatus" @click="logout"><router-link to="/login">LOGOUT</router-link></li>
-				<li v-else @click="login"><router-link to="/login">LOGIN</router-link></li>
+				<li v-if="$store.getters.loginStatus" @click="logout">
+					<router-link to="/login">LOGOUT</router-link>
+				</li>
+				<li v-else @click="login">
+					<router-link to="/login">LOGIN</router-link>
+				</li>
 			</ul>
 		</nav>
 	</header>
@@ -23,33 +31,34 @@
 
 <script>
 	export default {
-		methods:{
-			logout(){
-				this.$store.dispatch('logout');
+		methods: {
+			logout() {
+				this.$store.dispatch("logout");
 			},
-			login(){
-				this.$router.push('/login');
-			}
-		}
+			login() {
+				this.$router.push("/login");
+			},
+		},
 	};
 </script>
 
 <style scoped>
 	header {
+		background-color: white;
+		margin: 0 10%;
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
-		justify-content: space-between;	
 	}
-	h1 {
-		font-weight: 700px;
-		font-size: 36px;
-		color: #f08c00;
-		margin-left: 10px;
+	.main-logo {
+		height: 5rem;
+		width: 5rem;
 	}
-	ul{
+	ul {
 		list-style: none;
 		display: flex;
-		gap: 20px;
+		justify-content: space-around;
+		gap: 2rem;
 	}
 	a:link {
 		text-decoration: none;

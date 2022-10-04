@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>NOTICES</h2>
-		<base-button class="refresh" @click="reload">Refresh</base-button>
 	</div>
 	<div v-if="!loading">
 		<ul>
@@ -10,7 +9,7 @@
 					<div class="content-type">
 						<div></div>
 						<div id="content-type">
-							<p>{{ notice.id }}</p>
+							<p>{{ notice.sector }}</p>
 						</div>
 					</div>
 					<div class="content-head">
@@ -32,7 +31,7 @@
 					<div class="content-type">
 						<div></div>
 						<div id="content-type">
-							<p>{{ notice.id }}</p>
+							<p>{{ notice.sector }}</p>
 						</div>
 					</div>
 					<div>
@@ -48,14 +47,8 @@
 </template>
 
 <script>
-	import BaseButton from "../UI/BaseButton.vue";
-	//import CubeSpin from 'vue-loading-spinner/components/Cube'
-	//import NoticeForm from './NoticeForm.vue';
 
 	export default {
-		components: {
-			BaseButton,
-		},
 		data(){
 			return {
 				loading : false,
@@ -104,7 +97,8 @@
 	}
 	.refresh {
 		float: right;
-		margin-right: 40px;
+		margin-bottom: 0.8rem;
+		margin-right: 20%;
 	}
 	#content-type {
 		font-size: 16px;

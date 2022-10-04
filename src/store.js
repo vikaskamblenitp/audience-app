@@ -10,16 +10,18 @@ const store = createStore({
 		return {
 			isLoggedIn: false,
 			allNotices: [
-				{
-					id: "Shopping",
+				{	
+					id: 1,
+					sector: "Shopping",
 					via: "form",
 					title: "Patil & Compony",
 					description: "50% Off in Patil & Compony, HURRY UP!!",
 					issuedBy: "Avgan Patil",
 					phone: "9011809016",
 				},
-				{
-					id: "Government",
+				{	
+					id: 2,
+					sector: "Government",
 					via: "form",
 					title: "Government Scheme",
 					description: "Shahu Maharaj Education Scheme",
@@ -53,6 +55,7 @@ const store = createStore({
 				.then((userCredential) => {
 					console.log(userCredential.user);
 					console.log("user logged in successfully");
+					//localStorage.setItem('token',userCredential)
 					context.commit("login");
 				})
 				.catch((error) => {
@@ -69,7 +72,7 @@ const store = createStore({
 			if (payload.via === "form") {
 				notice = {
 					via: payload.via,
-					id: payload.id,
+					sector: payload.sector,
 					title: payload.title,
 					description: payload.description,
 					issuedBy: payload.issuedBy,
@@ -111,7 +114,7 @@ const store = createStore({
 			
 			const noticeArray = [];
 			for(const id in fetchedNotices){
-				noticeArray.push(fetchedNotices[id]);
+				noticeArray.push({...fetchedNotices[id],id:id});
 			}
 			context.commit("fetchNotice",noticeArray);
 		},

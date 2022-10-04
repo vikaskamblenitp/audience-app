@@ -1,11 +1,9 @@
 <template>
 	<div class="form-option">
-		<nav>
-			<ul class="list">
-				<li @click="noticeOption('form')">Add Notice via Form</li>
-				<li @click="noticeOption('picture')">Add Notice via Picture</li>
-			</ul>
-		</nav>
+			<div class="list">
+				<p @click="noticeOption('form')">Add Notice via Form</p>
+				<p @click="noticeOption('picture')">Add Notice via Picture</p>
+			</div>
 	</div>
 	<div>
 		<div v-if="optionSelected === 'picture'">
@@ -30,7 +28,7 @@
 			<form @submit.prevent="submitData">
 				<div class="form-control">
 					<label for="name">Type</label>
-					<input type="text" name="Type" id="Type" v-model="id" />
+					<input type="text" name="Type" id="Type" v-model="sector" />
 				</div>
 				<div class="form-control">
 					<label for="title">Title</label>
@@ -52,7 +50,7 @@
 				</div>
 				<div class="form-control">
 					<label for="Contact">Contact No</label>
-					<input type="number" name="phone" v-model="phone" />
+					<input type="text" name="phone" v-model="phone" />
 				</div>
 				<base-button>Submit</base-button>
 			</form>
@@ -64,7 +62,7 @@
 	export default {
 		data() {
 			return {
-				id: null,
+				sector: null,
 				title: null,
 				description: null,
 				issuedBy: null,
@@ -82,7 +80,7 @@
 			submitData() {
 				this.$store.dispatch("addNotice", {
 					via: "form",
-					id: this.id,
+					sector: this.sector,
 					title: this.title,
 					description: this.description,
 					issuedBy: this.issuedBy,
@@ -100,7 +98,7 @@
 			saveImageNotice() {
 				this.$store.dispatch("addNotice", {
 					via: "picture",
-					id: this.id,
+					sector: this.sector,
 					pic : this.imageList,
 				});
 				this.$router.push("/notices");
@@ -119,10 +117,6 @@
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 		padding: 2rem;
 		background-color: #ffffff;
-	}
-
-	ul {
-		list-style: none;
 	}
 
 	.error p {
@@ -157,8 +151,22 @@
 		margin: 0 auto;
 		max-width: 40rem;
 	}
+	#description {
+		display: block;
+		width: 100%;
+	}
 	.list {
 		display: flex;
 		justify-content: space-around;
+	}
+	.list p {
+		cursor: pointer;
+		border: 2px solid #9c36b5;
+		padding: 0.5%;
+		border-radius: 10px;
+	}
+	.list p:hover{
+		background-color: #9c36b5;
+		color: #ffffff;
 	}
 </style>
