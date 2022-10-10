@@ -8,9 +8,10 @@ import {
 const store = createStore({
 	state() {
 		return {
-			isLoggedIn: false,
+			currentUser: null,
+			isLoggedIn: localStorage.getItem('userData') ? true : false,
 			allNotices: [
-				{	
+				{
 					id: 1,
 					sector: "Shopping",
 					via: "form",
@@ -19,7 +20,7 @@ const store = createStore({
 					issuedBy: "Avgan Patil",
 					phone: "9011809016",
 				},
-				{	
+				{
 					id: 2,
 					sector: "Government",
 					via: "form",
@@ -32,19 +33,19 @@ const store = createStore({
 		};
 	},
 	mutations: {
-		login(state) {
+		loginUser(state, payload) {
+			state.currentUser = payload;
+			localStorage.setItem('userData', payload);
 			state.isLoggedIn = true;
 		},
 		logout(state) {
+			localStorage.removeItem('userData');
 			state.isLoggedIn = false;
 		},
-		signup(state) {
-			state.isLoggedIn = true;
-		},
-		addNotice(state, notice) {	
+		addNotice(state, notice) {
 			state.allNotices.unshift(notice);
 		},
-		fetchNotice(state,payload) {
+		fetchNotice(state, payload) {
 			state.allNotices = payload;
 		},
 	},
@@ -53,14 +54,12 @@ const store = createStore({
 			const auth = getAuth();
 			signInWithEmailAndPassword(auth, payload.email, payload.password)
 				.then((userCredential) => {
-					console.log(userCredential.user);
 					console.log("user logged in successfully");
 					//localStorage.setItem('token',userCredential)
-					context.commit("login");
+					context.commit("loginUser", userCredential.user);
 				})
 				.catch((error) => {
 					alert(error.message);
-					this.$router.push("/login");
 					console.log(error.message);
 				});
 		},
@@ -107,32 +106,31 @@ const store = createStore({
 			}
 		},
 		async fetchNotice(context) {
-			const response =await fetch(
+			const response = await fetch(
 				"https://audience-app-dc736-default-rtdb.firebaseio.com/notice.json"
-			)
+			);
 			const fetchedNotices = await response.json();
-			
+
 			const noticeArray = [];
-			for(const id in fetchedNotices){
-				noticeArray.push({...fetchedNotices[id],id:id});
+			for (const id in fetchedNotices) {
+				noticeArray.push({ ...fetchedNotices[id], id: id });
 			}
-			context.commit("fetchNotice",noticeArray);
+			context.commit("fetchNotice", noticeArray);
 		},
 		signup(context, payload) {
 			const auth = getAuth();
+
 			createUserWithEmailAndPassword(auth, payload.email, payload.password)
 				.then((userCredential) => {
 					// Signed in
 					const user = userCredential.user;
-					context.commit("signup");
+					context.commit("loginUser");
 					console.log(user);
 					// ...
 				})
 				.catch((error) => {
 					const errorMessage = error.message;
 					alert(errorMessage);
-					console.log(errorMessage);
-					this.$router.push("/login");
 					// ..
 				});
 		},
@@ -143,7 +141,7 @@ const store = createStore({
 		},
 		loginStatus(state) {
 			return state.isLoggedIn;
-		}
+		},
 	},
 });
 

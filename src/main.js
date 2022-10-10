@@ -18,9 +18,8 @@ const firebaseConfig = {
   };
   
   // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
-console.log(firebaseApp);
 
 import router from './router.js';
 import store from './store.js';

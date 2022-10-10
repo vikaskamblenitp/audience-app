@@ -71,6 +71,11 @@
 				imageList: null,
 			};
 		},
+		created() {
+			if(!this.$store.state.isLoggedIn){
+				this.$router.push('/notices')
+			}
+		},
 		computed: {
 			optionSelected() {
 				return this.formOption;
